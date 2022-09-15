@@ -12,6 +12,7 @@ const int pot1 = A5;
 int potValue = 0;
 
 void setup() {
+    //Zet pins van led op output
     pinMode(led1, OUTPUT);
     pinMode(led2, OUTPUT);
     pinMode(led3, OUTPUT);
@@ -22,11 +23,13 @@ void setup() {
 }
 
 void loop() {
-
+    //Waarde van de potmeter
     potValue = analogRead(pot1);
 
-    int val = map(potValue, 0, 1023, 0, 8);     // scale it for use with the servo (value between 0 and 180)
-
+    //De 1024 waardes van de potmeter omzetten naar 9 waardes(in simulatie is 8 genoeg, potmeter in het echt was iets minder precies denk ik)
+    int val = map(potValue, 0, 1023, 0, 8);
+    //Als de omgezette waarde meer dan 0 is lamp 1 aan etc...
+    //TODO for loop van maken?
     if (val > 0) {
         digitalWrite(led1, 1);
     } else {
