@@ -19,7 +19,7 @@ void loop() {
             onOffCounter = 1;
         } else {
             //Anders zet lamp uit
-            onf = 0;
+            onOffCounter = 0;
         }
 
         //Als button nog ingedrukt is wachten
