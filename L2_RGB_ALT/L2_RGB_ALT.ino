@@ -1,7 +1,9 @@
-int switchPin = 4;
-int ledPin = 11;
+int switchPin = 8;
+int ledR = 11;
+int ledG = 11;
+int ledB = 11;
 int switchState = LOW;
-int onOffCounter = 1;
+int onOffCounter = 0;
 
 int stands[7][3]= {{0, 0, 0},{0, 0, 1},{0, 1, 0},{0, 1, 1},{1, 0, 1},{1, 1, 0},{1, 1, 1}};
 
@@ -18,19 +20,29 @@ void loop() {
     //Als button ingedrukt is
     if (digitalRead(switchPin) == HIGH) {
         //En lamp uit is
-
-        if (onOffCounter == 7) {
+        if (onOffCounter == 0) {
             //Zet lamp aan
             onOffCounter = 1;
-        } else {
-            onOffCounter++;
         }
+        delay(50);
         //Als button nog ingedrukt is wachten
-        while (digitalRead(switchPin) == HIGH) {
-            delay(1);
+    }
+    //Als counter 1 staat led aan
+    if (onOffCounter == 1) {
+        for( int i = 1; i < sizeof(stands); i++){
+            digitalWrite(ledPin, stands[i][1]);
+            digitalWrite(10, stands[i][2]);
+            digitalWrite(9, stands[i][3]);
+
+            delay(500);
+
         }
-        digitalWrite(ledPin, stands[onOffCounter][1]);
-        digitalWrite(10, stands[onOffCounter][2]);
-        digitalWrite(9, stands[onOffCounter][3]);
+        onOffCounter = 0;
+    }
+    //Als counter 0 staat led uit
+    if (onOffCounter == 0) {
+        digitalWrite(ledPin, LOW);
+        digitalWrite(10, LOW);
+        digitalWrite(9, LOW);
     }
 }
