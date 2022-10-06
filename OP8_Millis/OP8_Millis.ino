@@ -1,8 +1,8 @@
 #include <IRremote.h>
 
-const int lPins[] = {12, 11, 10, 9};
+const int lPins[] = {7, 6, 5, 4};
 const int timings[] = {100, 200, 300, 400, 500, 600, 700, 800, 900};
-const int irPin = 8;
+const int irPin = 11;
 
 IRrecv irrecv(irPin);
 decode_results results;
@@ -12,6 +12,7 @@ unsigned long lastTimes[] = {0, 0, 0, 0};
 int ledStatus[] = {LOW, LOW, LOW, LOW};
 int ledTiming[] = {0, 0, 0, 0};
 int ledOn[] = {0, 0, 0, 0};
+int ledselected = -1;
 
 void setup() {
     Serial.begin(9600);
@@ -27,105 +28,123 @@ void setup() {
 }
 
 int irDo() {
+
     if (irrecv.decode(&results)) {
         Serial.println(results.value);
         irrecv.resume();
-        return (results.value);
+        if (results.value != 0) {
+            return (results.value);
+        }
+
     }
 }
 
 
 void loop() {
-    ledon(irDo());
+    if (ledselected == -1) {
+        ledselected = ledon(irDo());
+    }
+    if (ledselected >= 0) {
+        strengt(ledselected);
+    }
     for (int t = 0; t < 4; t++) {
         roll(t);
     }
-
 }
 
 
-void ledon(int string) {
-
+int ledon(int string) {
     switch (string) {
-        case 16582903:
-            strengt(0, irDo());
+        case 0xFF30CF:
+            return (0);
             break;
 
-        case 16615543:
-            strengt(1, irDo());
+        case 0xFF18E7:
+            return (1);
             break;
 
-        case 16599223:
-            strengt(2, irDo());
+        case 0xFF7A85:
+            return (2);
             break;
 
-        case 16591063:
-            strengt(3, irDo());
+        case 0xFF10EF:
+            return (3);
             break;
+
     }
-
+    return -1;
 }
 
-void strengt(int led, int string) {
+void strengt(int led) {
+    Serial.print("selected");
+    Serial.print(led);
+    Serial.println(" | set length");
+    int string = irDo();
 
     switch (string) {
-        case 16582903:
-            update(led, timings[1]);
+        case 0xFF30CF:
+            update(led, 1);
             break;
 
-        case 16615543:
-            update(led, timings[2]);
+        case 0xFF18E7:
+            update(led, 2);
             break;
 
-        case 16599223:
-            update(led, timings[3]);
+        case 0xFF7A85:
+            update(led, 3);
             break;
 
-        case 16591063:
-            update(led, timings[4]);
+        case 0xFF10EF:
+            update(led, 4);
             break;
 
-        case 16623703:
-            update(led, timings[5]);
+        case 0xFF38C7:
+            update(led, 5);
             break;
 
-        case 16607383:
-            update(led, timings[6]);
+        case 0xFF5AA5:
+            update(led, 6);
             break;
 
-        case 16586983:
-            update(led, timings[7]);
+        case 0xFF42BD:
+            update(led, 7);
             break;
 
-        case 16619623:
-            update(led, timings[8]);
+        case 0xFF4AB5:
+            update(led, 8);
             break;
 
-        case 16603303:
-            update(led, timings[9]);
+        case 0xFF52AD:
+            update(led, 9);
             break;
     }
 }
 
 void update(int l, int t) {
+    ledselected = -1;
+    Serial.print("\n led: ");
+    Serial.print(l);
+    Serial.print("\t string: ");
+    Serial.print(t);
+    Serial.print("\n");
     if (ledOn[l] == 0) {
         int ic = 0;
         for (int i: ledOn) {
             if (i == 2) {
-                ledStatus[l] = LOW;
+                ledStatus[ic] = LOW;
+                ledOn[ic] = 0;
                 digitalWrite(lPins[ic], LOW);
-                i == 0;
             }
             if (i == 1) {
-                i++;
+                ledOn[ic] = 2;
             }
+            ic++;
         }
         ledStatus[l] = HIGH;
+        ledOn[l] = 1;
         digitalWrite(lPins[l], HIGH);
     }
-
     ledTiming[l] = timings[t];
-    Serial.println(ledTiming[l]);
     roll(l);
 
 }
@@ -133,10 +152,11 @@ void update(int l, int t) {
 void roll(int l) {
     unsigned long curTime = millis();
 
-    if (curTime - lastTimes[l] >= ledTiming[l]) {
+    if (curTime - lastTimes[l] >= ledTiming[l] && ledOn[l] >= 1) {
         lastTimes[l] = curTime;
 
-        ledStatus[l] = (ledOn[l] == 1) ? HIGH : LOW;
+        ledStatus[l] = (ledStatus[l] == LOW) ? HIGH : LOW;
+
         digitalWrite(lPins[l], ledStatus[l]);
     }
 
