@@ -54,6 +54,7 @@ void loop() {
             servo.write(0);
         }
         //het uitrekenen van de hoek van der servo
+        //TODO dit uiteggen wat map doet
         int deg = map((distance - 4) * 10, 0, 60, 0, 180);
         //Zet in het logboek dat de graden naar deg gaat
         Serial.print(" deg :");
