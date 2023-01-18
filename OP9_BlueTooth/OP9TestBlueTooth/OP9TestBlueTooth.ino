@@ -8,8 +8,10 @@ void setup() {
 void loop() {
     if (Serial.available() > 0) {
         state = Serial.read();
+
         Serial.println("Something");
         Serial.println(state);
+
         flag = 0;
     }
 }

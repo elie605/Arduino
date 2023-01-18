@@ -25,7 +25,7 @@ void setup() {
 void loop() {
     // als knop 1 is ingedrukt do dan
     if (digitalRead(switch1) == HIGH) {
-        //checken of bijde knoppen ingedrukt zijn
+        //checken of beide knoppen ingedrukt zijn
         //zo ja voer functie buttonBoth uit
         if (checkButtonBoth()) { buttonBoth(); }
         //zo niet betekent dit dat alleen knop 1 is ingedrukt is, voer dus functie 1 uit
@@ -35,7 +35,7 @@ void loop() {
     } else {
         // Als knop 1 niet is ingedrukt dan kijk of knop 2 ingedrukt is
         if (digitalRead(switch2) == HIGH) {
-            // zo ja check of bijde knoppen zijn ingedrukt
+            // zo ja check of beide knoppen zijn ingedrukt
             if (checkButtonBoth()) { buttonBoth(); }
             else {
                 //zo niet betekent dit dat alleen knop 2 is ingedrukt is, voer dus functie 2 uit
